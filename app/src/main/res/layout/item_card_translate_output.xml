@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/card_output"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardBackgroundColor="@android:color/white">
+
+
+    <RelativeLayout
+        android:id="@+id/rv_card_output"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rv_card_output_menu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/layout_touch_target"
+            android:paddingLeft="@dimen/component_cards_left_and_right_padding"
+            android:paddingRight="@dimen/component_cards_left_and_right_padding">
+
+            <ImageView
+                android:id="@+id/ic_fullscreen"
+                android:layout_width="@dimen/layout_touch_target"
+                android:layout_height="@dimen/layout_touch_target"
+                android:layout_toLeftOf="@+id/ic_favorite"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_fullscreen" />
+
+            <ImageView
+                android:id="@+id/ic_favorite"
+                android:layout_width="@dimen/layout_touch_target"
+                android:layout_height="@dimen/layout_touch_target"
+                android:layout_toLeftOf="@+id/ic_copy"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_bookmark" />
+
+            <ImageView
+                android:id="@+id/ic_copy"
+                android:layout_width="@dimen/layout_touch_target"
+                android:layout_height="@dimen/layout_touch_target"
+                android:layout_toLeftOf="@+id/ic_share"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_content_copy" />
+
+            <ImageView
+                android:id="@+id/ic_share"
+                android:layout_width="@dimen/layout_touch_target"
+                android:layout_height="@dimen/layout_touch_target"
+                android:layout_alignParentRight="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_share" />
+
+            <ImageView
+                android:id="@+id/ic_listen_output_text"
+                android:layout_width="@dimen/layout_touch_target"
+                android:layout_height="@dimen/layout_touch_target"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_volume_up" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/rv_card_output_menu"
+            android:background="@color/grey_300"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/tv_translated"
+            style="@style/TextBodyCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/line"
+            android:ellipsize="end"
+            android:padding="@dimen/component_cards_supporting_text_padding"
+            tool:text="@string/translated_text" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

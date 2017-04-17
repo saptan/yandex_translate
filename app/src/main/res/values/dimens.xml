@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Typography -->
-    <dimen name="material_typography_button">15sp</dimen>
-    <dimen name="material_typography_caption">13sp</dimen>
-    <dimen name="material_typography_body1">15sp</dimen>
-    <dimen name="material_typography_body2">15sp</dimen>
-    <dimen name="material_typography_subheading">17sp</dimen>
-    <dimen name="material_typography_title">21sp</dimen>
-    <dimen name="material_typography_headline">24sp</dimen>
-    <dimen name="material_typography_display1">34sp</dimen>
-    <dimen name="material_typography_display2">45sp</dimen>
-    <dimen name="material_typography_display3">56sp</dimen>
-    <dimen name="material_typography_display4">112sp</dimen>
+    <dimen name="typography_button">15sp</dimen>
+    <dimen name="typography_caption">13sp</dimen>
+    <dimen name="typography_body1">15sp</dimen>
+    <dimen name="typography_body2">15sp</dimen>
+    <dimen name="typography_subheading">17sp</dimen>
+    <dimen name="typography_title">21sp</dimen>
+    <dimen name="typography_headline">24sp</dimen>
+    <dimen name="typography_display1">34sp</dimen>
+    <dimen name="typography_display2">45sp</dimen>
+    <dimen name="typography_display3">56sp</dimen>
+    <dimen name="typography_display4">112sp</dimen>
 
     <!-- Keylines and margins -->
     <!-- Screen edge left and right margins -->
-    <dimen name="material_layout_keylines_screen_edge_margin">16dp</dimen>
+    <dimen name="layout_keylines_screen_edge_margin">16dp</dimen>
     <!-- Vertical spacing -->
-    <dimen name="material_layout_vertical_spacing_tool_bar">56dp</dimen>
-    <dimen name="material_layout_vertical_spacing_subtitle">48dp</dimen>
+    <dimen name="layout_vertical_spacing_tool_bar">56dp</dimen>
+    <dimen name="layout_vertical_spacing_subtitle">48dp</dimen>
 
     <!-- Touch target size -->
-    <dimen name="material_layout_icon">24dp</dimen>
-    <dimen name="material_layout_touch_target">48dp</dimen>
+    <dimen name="layout_icon">24dp</dimen>
+    <dimen name="layout_touch_target">48dp</dimen>
+    <dimen name="layout_touch_icon_swap">56dp</dimen>
+
+    <!-- Cards -->
+    <dimen name="component_cards_top_and_bottom_padding">16dp</dimen>
+    <dimen name="component_cards_left_and_right_padding">16dp</dimen>
+    <dimen name="component_cards_supporting_text_padding">16dp</dimen>
 </resources>

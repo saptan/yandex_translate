@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Переводчик</string>
+
+    <string name="input_text">  Яндекс открывает набор в Школу мобильной разработки для Android.
+        Приглашаем молодых специалистов с опытом разработки на объектно-ориентированных языках
+        программирования (Java, C++ и прочих). Занятия будут проходить в Москве.
+
+        Для поступления вам понадобятся базовые знания по алгоритмам,
+        знакомство с одним из языков программирования, а также небольшой опыт создания собственных
+        приложений. Не помешают знания основ разработки под Android.
+    </string>
+
+    <string name="translated_text">
+        Yandex opens the set in mobile development for Android. We invite young professionals with
+        experience in development of object-oriented programming languages (Java, C++ and others).
+        Classes will be held in Moscow.
+
+        For admission you will need basic knowledge of algorithms,
+        familiarity with one of the programming languages and some experience of creating their own
+        applications. Will not prevent knowledge of the basics of developing for Android.
+
+    </string>
 </resources>
