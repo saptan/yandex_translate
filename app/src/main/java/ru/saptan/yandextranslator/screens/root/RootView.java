@@ -3,15 +3,18 @@ package ru.saptan.yandextranslator.screens.root;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.saptan.yandextranslator.App;
 import ru.saptan.yandextranslator.R;
 import ru.saptan.yandextranslator.mvp.StateManager;
+import ru.saptan.yandextranslator.navigation.FragmentNavigator;
+import ru.terrakok.cicerone.Navigator;
 
-public class RootView extends AppCompatActivity implements RootContract.View{
+public class RootView extends AppCompatActivity implements RootContract.View {
 
     protected final String TAG_CLASS = getClass().getSimpleName();
     protected final String TAG = "debug";
@@ -24,6 +27,19 @@ public class RootView extends AppCompatActivity implements RootContract.View{
 
     // Объект для сохранения состояния.
     public final StateManager stateManager = new StateManager(getSupportFragmentManager(), TAG_CLASS);
+
+    // Непосредственная реализация «переключения экранов» внутри контейнера
+    private Navigator navigator = new FragmentNavigator(getSupportFragmentManager(), R.id.container) {
+        @Override
+        protected void showSystemMessage(String message) {
+            Toast.makeText(RootView.this, message, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void exit() {
+            finish();
+        }
+    };
 
 
     @Override
@@ -52,15 +68,19 @@ public class RootView extends AppCompatActivity implements RootContract.View{
         }
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
         setupPresenter();
         rootPresenter.attachView(this);
+        App.getInstance().getNavigatorHolder().setNavigator(navigator);
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         super.onPause();
         rootPresenter.detachView();
+        App.getInstance().getNavigatorHolder().removeNavigator();
     }
 
     @Override

@@ -3,16 +3,23 @@ package ru.saptan.yandextranslator.mvp;
 
 import java.lang.ref.WeakReference;
 
+import ru.saptan.yandextranslator.App;
+import ru.terrakok.cicerone.Router;
 import rx.subscriptions.CompositeSubscription;
 
-public abstract class MvpBasePresenter<View extends MvpView>  implements MvpPresenter<View> {
+public abstract class MvpBasePresenter<View extends MvpView> implements MvpPresenter<View> {
 
 
     protected final String TAG_CLASS = getClass().getSimpleName();
     protected final String TAG = "debug";
 
+    // Класс, который превращает высокоуровневые вызовы навигации презентера в набор Command
+    protected Router router;
+    // Название текущего экрана
+    protected String currentScreen;
+
     //
-    private boolean firstLaunch ;
+    private boolean firstLaunch;
     // Ссылка на вьюшку
     private WeakReference<View> view;
     // Объект для хранения всех подписок
@@ -21,10 +28,12 @@ public abstract class MvpBasePresenter<View extends MvpView>  implements MvpPres
     public MvpBasePresenter() {
         firstLaunch = true;
         compositeSubscription = new CompositeSubscription();
+        router = App.getInstance().getRouter();
     }
 
     /**
      * Привязать к презентеру вьюшку
+     *
      * @param view - вью, отвечающее за взаимодействие с пользователем
      */
     @Override
@@ -55,6 +64,7 @@ public abstract class MvpBasePresenter<View extends MvpView>  implements MvpPres
 
     /**
      * Сообщить презентеру о том, что view было уничтожено
+     *
      * @param isChangingConfig - true, если view было уничтожено из-за смены конфигурации
      *                         false, если view было уничтожено из-за закрытия приложения
      */
@@ -67,7 +77,6 @@ public abstract class MvpBasePresenter<View extends MvpView>  implements MvpPres
             compositeSubscription.unsubscribe();
         }
     }
-
 
 
 }
