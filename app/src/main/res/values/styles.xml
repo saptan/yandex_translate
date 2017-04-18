@@ -26,12 +26,12 @@
     </style>
 
     <style name="ToolbarTitleLanguage">
-        <item name="android:textSize">@dimen/typography_subheading</item>
+        <item name="android:textSize">@dimen/toolbar_title_language</item>
         <item name="android:textColor">@color/text.primary</item>
     </style>
 
     <style name="TextBodyCard">
-        <item name="android:textSize">@dimen/typography_body2</item>
+        <item name="android:textSize">@dimen/typography_subheading</item>
         <item name="android:textColor">@color/text.primary</item>
     </style>
 </resources>

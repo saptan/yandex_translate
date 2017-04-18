@@ -65,7 +65,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/line"
             android:background="@android:color/transparent"
-            android:maxLines="6"
             android:minLines="3"
             android:padding="@dimen/component_cards_supporting_text_padding"
             tool:text="@string/input_text" />

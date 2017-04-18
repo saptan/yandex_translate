@@ -71,22 +71,34 @@ public class RootView extends AppCompatActivity implements RootContract.View {
     @Override
     public void onResume() {
         super.onResume();
+        // Настроить Presenter для взаимодействия со View
         setupPresenter();
+        // Привязать к презентеру вьюшку
         rootPresenter.attachView(this);
+        // Установить навигатор
         App.getInstance().getNavigatorHolder().setNavigator(navigator);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        // Отвязать View от Presenter
         rootPresenter.detachView();
+        //
         App.getInstance().getNavigatorHolder().removeNavigator();
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
+        // Сообщить презентеру, что View может быть уничтожено
         rootPresenter.destroy(isChangingConfigurations());
+        // Если View остановлено (а в скором и уничтожено) не из-за смены конфигурации
+        if (!isChangingConfigurations()) {
+            // то обнулить все ссылки
+            rootPresenter = null;
+            navigator = null;
+        }
     }
 
 
