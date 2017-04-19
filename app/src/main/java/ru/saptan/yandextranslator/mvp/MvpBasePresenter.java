@@ -78,5 +78,9 @@ public abstract class MvpBasePresenter<View extends MvpView> implements MvpPrese
         }
     }
 
+    protected View getView() {
+        return view.get();
+    }
+
 
 }

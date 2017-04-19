@@ -1,35 +1,38 @@
 package ru.saptan.yandextranslator.screens.translate;
 
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import com.jakewharton.rxbinding.widget.RxTextView;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.saptan.yandextranslator.R;
 import ru.saptan.yandextranslator.models.TranslateCardItem;
+import ru.saptan.yandextranslator.base.BaseAdapter;
+import rx.Subscriber;
+import rx.Subscription;
 
 import static ru.saptan.yandextranslator.models.TranslateCardItem.Type.INPUT;
 import static ru.saptan.yandextranslator.models.TranslateCardItem.Type.OUTPUT;
 
 
-public class TranslateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-
-    // Список объектов
-    private List<TranslateCardItem> items;
+public class TranslateAdapter extends BaseAdapter<TranslateContract.View, TranslateCardItem> {
 
     TranslateAdapter() {
-        items = new ArrayList<>();
+        super();
     }
 
     @Override
@@ -53,19 +56,58 @@ public class TranslateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         // Если элемент является карточкой для ввода текста
         if (holder instanceof InputVH) {
+
+            InputVH inputVH = (InputVH) holder;
+
+            if (inputVH.textChangedSubscription != null) {
+                compositeSubscription.remove(inputVH.textChangedSubscription);
+            }
+
             // Текст, который необходимо перевести
-            ((InputVH) holder).editTextInput.setText(item.getText());
+            inputVH.editTextInput.setText(item.getText());
+
+            // Заменить кнопку Enter на Complete (готово), чтобы исключить перенос текста, а при нажатии
+            // на нее скрывать клавиатуру
+            inputVH.editTextInput.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            inputVH.editTextInput.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+            // Подписать на изменения текста
+            inputVH.textChangedSubscription = RxTextView
+                    .textChanges(inputVH.editTextInput)
+                    // Удалить пробелы в начале и конце строки
+                    .map(text -> text.toString().trim())
+                    // Пропускать только такой текст, длина которого больше 0
+                    .filter(text -> text.length() > 0)
+                    // Установить задержку в 900 мс, чтобы исключить частые запросы
+                    .debounce(500, TimeUnit.MILLISECONDS)
+                    .subscribe(new Subscriber<String>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(TAG, TAG_CLASS + ": onError -> " + e);
+                        }
+
+                        @Override
+                        public void onNext(String s) {
+                            if (getView() != null) {
+                                getView().textChanged(s);
+                            }
+                        }
+                    });
+
+
+            compositeSubscription.add((inputVH).textChangedSubscription);
         }
         // Если элемент является карточкой для отображения перевода
         else if (holder instanceof OutputVH) {
             ((OutputVH) holder).tvTranslated.setText(item.getText());
+
+
         }
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return items.size();
     }
 
     @Override
@@ -73,12 +115,11 @@ public class TranslateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return items.get(position).getTypeCard();
     }
 
-    public void insertItem(TranslateCardItem item) {
-        items.add(item);
-        notifyItemInserted(getItemCount() - 1);
-    }
 
-    class InputVH extends RecyclerView.ViewHolder {
+    static class InputVH extends RecyclerView.ViewHolder {
+
+        // Подписка на изменения текста
+        Subscription textChangedSubscription;
 
         @BindView(R.id.ic_listen_input_text)
         ImageView btnListenInputText;
@@ -99,7 +140,10 @@ public class TranslateAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-    class OutputVH extends RecyclerView.ViewHolder {
+    static class OutputVH extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.card_output)
+        CardView cardOutput;
 
         @BindView(R.id.ic_listen_output_text)
         ImageView btnListenOutputText;

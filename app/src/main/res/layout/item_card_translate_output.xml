@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/card_output"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -79,8 +78,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/line"
             android:ellipsize="end"
-            android:padding="@dimen/component_cards_supporting_text_padding"
-            tool:text="@string/translated_text" />
+            android:minLines="3"
+            android:padding="@dimen/component_cards_supporting_text_padding" />
 
     </RelativeLayout>
 

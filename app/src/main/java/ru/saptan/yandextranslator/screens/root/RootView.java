@@ -10,7 +10,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.saptan.yandextranslator.App;
 import ru.saptan.yandextranslator.R;
-import ru.saptan.yandextranslator.mvp.StateManager;
+import ru.saptan.yandextranslator.data.StateManager;
 import ru.saptan.yandextranslator.navigation.FragmentNavigator;
 import ru.terrakok.cicerone.Navigator;
 
@@ -66,6 +66,8 @@ public class RootView extends AppCompatActivity implements RootContract.View {
             // Иначе если Activity была восстановлена, то получить уже ранее созданный презентер
             rootPresenter = stateManager.get(RootPresenter.class.getName());
         }
+
+
     }
 
     @Override

@@ -15,8 +15,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ru.saptan.yandextranslator.R;
+import ru.saptan.yandextranslator.data.StateManager;
+import ru.saptan.yandextranslator.interactors.TranslateInteractor;
 import ru.saptan.yandextranslator.models.TranslateCardItem;
-import ru.saptan.yandextranslator.mvp.StateManager;
 
 public class TranslateView extends Fragment implements TranslateContract.View {
 
@@ -62,7 +63,6 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     }
 
 
-
     /**
      * Настроить Presenter для взаимодействия со View
      */
@@ -73,8 +73,10 @@ public class TranslateView extends Fragment implements TranslateContract.View {
 
         // Если фрагмент создается впервые, то...
         if (stateManager.firstTimeIn()) {
+            // Создать интерактор, который будет взаимодействовать с RetrofitApi для получения перевода
+            TranslateInteractor translateInteractor = new TranslateInteractor();
             // Создать новый презентер
-            TranslatePresenter _presenter = new TranslatePresenter();
+            TranslatePresenter _presenter = new TranslatePresenter(translateInteractor);
             // Сохранить его в менеджере состояний
             stateManager.put(_presenter);
             presenter = _presenter;
@@ -89,19 +91,39 @@ public class TranslateView extends Fragment implements TranslateContract.View {
      */
     private void initializeAdapter() {
         adapter = new TranslateAdapter();
-
+        adapter.bindView(this);
         // Карточка для ввода текста
         TranslateCardItem inputCard = new TranslateCardItem()
-                .setText(getString(R.string.input_text))
                 .setTypeCard(TranslateCardItem.Type.INPUT);
 
         // Карточка для отображения переведенного текста
         TranslateCardItem outputCard = new TranslateCardItem()
-                .setText(getString(R.string.translated_text))
                 .setTypeCard(TranslateCardItem.Type.OUTPUT);
 
         adapter.insertItem(inputCard);
         adapter.insertItem(outputCard);
+    }
+
+    /**
+     * Сообщить View о том, что содержимое EditText было изменено
+     *
+     * @param text - текст, который ввел пользователь, чтобы получить его перевод
+     */
+    @Override
+    public void textChanged(String text) {
+        presenter.translateText(text);
+    }
+
+    /**
+     * Отобразить перевод
+     *
+     * @param text - переведенный текст
+     */
+    @Override
+    public void showTranslatedText(String text) {
+        TranslateCardItem outputCard = adapter.getItem(TranslateCardItem.Type.OUTPUT);
+        outputCard.setText(text);
+        adapter.updateItem(outputCard, TranslateCardItem.Type.OUTPUT);
     }
 
     @Override
@@ -124,6 +146,7 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        adapter.unsubscribe();
 
         // Если фрагмент уничтожен из-за смены конфигурации (например, поворот экрана), то
         // Presenter продолжает жить, иначе
