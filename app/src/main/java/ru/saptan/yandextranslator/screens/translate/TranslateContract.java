@@ -17,6 +17,11 @@ public interface TranslateContract {
          * @param text - переведенный текст
          */
         void showTranslatedText(String text);
+
+        /**
+         * Спрятать карточку с переводом текста
+         */
+        void hideCardTranslation();
     }
 
     interface Presenter {

@@ -12,7 +12,10 @@ import rx.Subscription;
 public class TranslatePresenter extends MvpBasePresenter<TranslateView>
         implements TranslateContract.Presenter {
 
+    // Интерактор для получения перевода
     private TranslateInteractor translateInteractor;
+    // Переведенный текст
+    private String translatedText;
 
     public TranslatePresenter(TranslateInteractor translateInteractor) {
         this.translateInteractor = translateInteractor;
@@ -20,16 +23,16 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView>
 
     /**
      * Выполнить перевод текста
+     *
      * @param text - текст, который необходмо перевести
      */
     @Override
     public void translateText(String text) {
-
         Subscription subscription = translateInteractor.getTranslation(text, "ru-en")
                 .subscribe(new Subscriber<TranslationResponse>() {
                     @Override
                     public void onCompleted() {
-
+                        getView().showTranslatedText(translatedText);
                     }
 
                     @Override
@@ -39,10 +42,11 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView>
 
                     @Override
                     public void onNext(TranslationResponse translationResponse) {
-                        getView().showTranslatedText(translationResponse.getTranslatedText().get(0));
+                        translatedText =  translationResponse.getTranslatedText().get(0);
                     }
                 });
 
         compositeSubscription.add(subscription);
+
     }
 }

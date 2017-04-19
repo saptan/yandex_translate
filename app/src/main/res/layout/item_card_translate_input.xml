@@ -30,13 +30,15 @@
                 android:scaleType="center"
                 android:src="@drawable/ic_action_volume_up" />
 
+
             <ImageView
                 android:id="@+id/ic_voice_input"
                 android:layout_width="@dimen/layout_touch_target"
                 android:layout_height="@dimen/layout_touch_target"
                 android:layout_alignParentRight="true"
                 android:scaleType="center"
-                android:src="@drawable/ic_action_keyboard_voice" />
+                android:src="@drawable/ic_action_keyboard_voice"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/ic_paste"
@@ -44,7 +46,18 @@
                 android:layout_height="@dimen/layout_touch_target"
                 android:layout_toLeftOf="@+id/ic_voice_input"
                 android:scaleType="center"
-                android:src="@drawable/ic_action_content_paste" />
+                android:src="@drawable/ic_action_content_paste"
+                android:visibility="gone" />
+
+
+            <ImageView
+                android:id="@+id/ic_clear"
+                android:layout_width="@dimen/layout_touch_target"
+                android:layout_height="@dimen/layout_touch_target"
+                android:layout_alignParentRight="true"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_close"
+                android:visibility="gone" />
 
 
         </RelativeLayout>
@@ -64,8 +77,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/line"
             android:background="@android:color/transparent"
-            android:hint="@string/edit_text.hint.translate.input"
             android:gravity="top"
+            android:hint="@string/edit_text.hint.translate.input"
             android:minLines="3"
             android:padding="@dimen/component_cards_supporting_text_padding" />
 

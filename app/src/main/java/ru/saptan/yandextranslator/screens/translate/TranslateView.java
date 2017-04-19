@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +91,7 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     private void initializeAdapter() {
         adapter = new TranslateAdapter();
         adapter.bindView(this);
+
         // Карточка для ввода текста
         TranslateCardItem inputCard = new TranslateCardItem()
                 .setTypeCard(TranslateCardItem.Type.INPUT);
@@ -111,7 +111,13 @@ public class TranslateView extends Fragment implements TranslateContract.View {
      */
     @Override
     public void textChanged(String text) {
-        presenter.translateText(text);
+        // Еслм длина текста больше нуля
+        if (text.length() > 0)
+            // то сообщить Presenter-у что необходимо выполнить перевод текста
+            presenter.translateText(text);
+        else
+            // Иначе если это пустая строка, то спрятать карточку с переводом
+            hideCardTranslation();
     }
 
     /**
@@ -123,7 +129,15 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     public void showTranslatedText(String text) {
         TranslateCardItem outputCard = adapter.getItem(TranslateCardItem.Type.OUTPUT);
         outputCard.setText(text);
-        adapter.updateItem(outputCard, TranslateCardItem.Type.OUTPUT);
+        adapter.updateItem(TranslateCardItem.Type.OUTPUT);
+    }
+
+    /**
+     * Спрятать карточку с переводом текста
+     */
+    @Override
+    public void hideCardTranslation() {
+        showTranslatedText("");
     }
 
     @Override
@@ -146,7 +160,7 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-        adapter.unsubscribe();
+        adapter.destroy();
 
         // Если фрагмент уничтожен из-за смены конфигурации (например, поворот экрана), то
         // Presenter продолжает жить, иначе

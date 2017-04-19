@@ -24,6 +24,7 @@ import ru.saptan.yandextranslator.models.TranslateCardItem;
 import ru.saptan.yandextranslator.base.BaseAdapter;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 import static ru.saptan.yandextranslator.models.TranslateCardItem.Type.INPUT;
 import static ru.saptan.yandextranslator.models.TranslateCardItem.Type.OUTPUT;
@@ -31,8 +32,14 @@ import static ru.saptan.yandextranslator.models.TranslateCardItem.Type.OUTPUT;
 
 public class TranslateAdapter extends BaseAdapter<TranslateContract.View, TranslateCardItem> {
 
+    // Состояние карточки:
+    // true - Пусто (текстовое поле незаполнено, отображаются кнопки для вставки текста и голосового ввода)
+    // false - Не Пусто (текстовое поле заполнено, отображается кнопка для удаления текста)
+    private boolean emptyState;
+
     TranslateAdapter() {
         super();
+        emptyState = false;
     }
 
     @Override
@@ -63,8 +70,10 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
                 compositeSubscription.remove(inputVH.textChangedSubscription);
             }
 
-            // Текст, который необходимо перевести
-            inputVH.editTextInput.setText(item.getText());
+            if (item.getText().length() > 0) {
+                // Текст, который необходимо перевести
+                inputVH.editTextInput.setText(item.getText());
+            }
 
             // Заменить кнопку Enter на Complete (готово), чтобы исключить перенос текста, а при нажатии
             // на нее скрывать клавиатуру
@@ -76,10 +85,9 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
                     .textChanges(inputVH.editTextInput)
                     // Удалить пробелы в начале и конце строки
                     .map(text -> text.toString().trim())
-                    // Пропускать только такой текст, длина которого больше 0
-                    .filter(text -> text.length() > 0)
                     // Установить задержку в 900 мс, чтобы исключить частые запросы
                     .debounce(500, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<String>() {
                         @Override
                         public void onCompleted() {
@@ -93,7 +101,10 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
 
                         @Override
                         public void onNext(String s) {
+                            // Настроить отображение кнопок для первой карточки
+                            hideInputButtons(inputVH, s);
                             if (getView() != null) {
+                                // Сообщить View о том, что содержимое editTextInput было изменено
                                 getView().textChanged(s);
                             }
                         }
@@ -104,7 +115,15 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
         }
         // Если элемент является карточкой для отображения перевода
         else if (holder instanceof OutputVH) {
-            ((OutputVH) holder).tvTranslated.setText(item.getText());
+            OutputVH outputVH = (OutputVH) holder;
+
+            // Если текстовое поле не пустое, то
+            if (item.getText().length() > 0) {
+                // Отобразить карточку
+                outputVH.cardOutput.setVisibility(View.VISIBLE);
+            } else
+                // иначе скрыть карточку
+                outputVH.cardOutput.setVisibility(View.GONE);
 
 
         }
@@ -115,6 +134,36 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
         return items.get(position).getTypeCard();
     }
 
+    /**
+     * Настроить отображение кнопок для первой карточки
+     * @param inputVH - ViewHolder карточки для ввода текста
+     * @param text - текст, который ввел пользователь
+     */
+    private void hideInputButtons(InputVH inputVH, String text) {
+        // Если длина текста больше 0 и карточка находится в "пустом состоянии" (т.е. текстовое поле
+        // было пустое), то изменить ее состояние
+        if (text.length() > 0 && emptyState) {
+            // Скрыть кнопку "Вставить текст из буфера"
+            inputVH.btnPaste.setVisibility(View.GONE);
+            // Скрыть кнопку "Голосовой ввод"
+            inputVH.btnVoiceInput.setVisibility(View.GONE);
+            // Отобразить кнопку "Очистить текстовое поле"
+            inputVH.btnClearInputArea.setVisibility(View.VISIBLE);
+            // Переключить состояние карточки в "Не пусто"
+            emptyState = false;
+        }
+        // Иначе если длина текста равна 0 и карточка находится в состоянии "Не пусто"
+        else if (text.length() == 0 && !emptyState)  {
+            // Отобразить кнопку "Вставить текст из буфера"
+            inputVH.btnPaste.setVisibility(View.VISIBLE);
+            // Отобразить кнопку "Голосовой ввод"
+            inputVH.btnVoiceInput.setVisibility(View.VISIBLE);
+            // Скрыть кнопку "Очистить текстовое поле"
+            inputVH.btnClearInputArea.setVisibility(View.GONE);
+            // Переключить состояние карточки в "Пусто"
+            emptyState = true;
+        }
+    }
 
     static class InputVH extends RecyclerView.ViewHolder {
 
@@ -129,6 +178,9 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
 
         @BindView(R.id.ic_paste)
         ImageView btnPaste;
+
+        @BindView(R.id.ic_clear)
+        ImageView btnClearInputArea;
 
         @BindView(R.id.et_input)
         EditText editTextInput;

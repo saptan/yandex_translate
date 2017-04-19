@@ -34,22 +34,39 @@ public abstract class BaseAdapter<View, Item> extends RecyclerView.Adapter<Recyc
         return items.size();
     }
 
+    /**
+     * Добавить элемент в список
+     * @param item - объект
+     */
     public void insertItem(Item item) {
         items.add(item);
         notifyItemInserted(getItemCount() - 1);
     }
 
-    public void updateItem(Item item, int position) {
-        items.set(position, item);
+    /**
+     * Обновить элемент списка
+     * @param position - позиция элемента в списке
+     */
+    public void updateItem(int position) {
         notifyItemChanged(position);
     }
 
+    /**
+     * Получить элемент списка
+     * @param position - позиция элемента в списке
+     * @return - объект
+     */
     public Item getItem(int position) {
         return items.get(position);
     }
 
-    public void unsubscribe() {
+    /**
+     * Вызывается конда уничтожается View
+     */
+    public void destroy() {
+        // Очистить ссылку на View
         view.clear();
+        // Удалить все подписки
         compositeSubscription.clear();
     }
 

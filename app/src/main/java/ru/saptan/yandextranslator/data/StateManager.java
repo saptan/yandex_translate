@@ -1,4 +1,4 @@
-package ru.saptan.yandextranslator.mvp;
+package ru.saptan.yandextranslator.data;
 
 
 import android.os.Bundle;

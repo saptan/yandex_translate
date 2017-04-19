@@ -3,10 +3,9 @@ package ru.saptan.yandextranslator.models;
 
 public class TranslateCardItem {
     // Текст, отображаемый на карточке
-    private String text;
+    private String text = "";
     // Тип карточки (для ввода текста, или для отображения перевода)
     private int typeCard;
-
 
     public int getTypeCard() {
         return typeCard;
