@@ -4,10 +4,11 @@ package ru.saptan.yandextranslator.mvp;
 import java.lang.ref.WeakReference;
 
 import ru.saptan.yandextranslator.App;
+import ru.saptan.yandextranslator.screens.translate.TranslateViewModel;
 import ru.terrakok.cicerone.Router;
 import rx.subscriptions.CompositeSubscription;
 
-public abstract class MvpBasePresenter<View extends MvpView> implements MvpPresenter<View> {
+public abstract class MvpBasePresenter<View extends MvpView, ViewModel> implements MvpPresenter<View> {
 
 
     protected final String TAG_CLASS = getClass().getSimpleName();
@@ -24,6 +25,8 @@ public abstract class MvpBasePresenter<View extends MvpView> implements MvpPrese
     private WeakReference<View> view;
     // Объект для хранения всех подписок
     protected CompositeSubscription compositeSubscription;
+    // Модель для сохранения данных, необходимых для отображения View
+    protected ViewModel viewModel;
 
     public MvpBasePresenter() {
         firstLaunch = true;
@@ -40,10 +43,13 @@ public abstract class MvpBasePresenter<View extends MvpView> implements MvpPrese
     public void attachView(View view) {
 
         this.view = new WeakReference<View>(view);
-
+        // Если к Presenter-у первый раз привязывается View
         if (firstLaunch) {
             firstLaunch = false;
             onFirstViewAttach();
+        } else {
+            // Иначе View было пересоздано
+            onRecreated();
         }
     }
 
@@ -52,6 +58,13 @@ public abstract class MvpBasePresenter<View extends MvpView> implements MvpPrese
      * Например, можно получить данные из БД
      */
     protected void onFirstViewAttach() {
+    }
+
+    /**
+     * Метод вызывается тогда, когда Presenter пережил уничтожение старого View и привязывется к новому
+     */
+    protected void onRecreated() {
+
     }
 
     /**
@@ -81,6 +94,7 @@ public abstract class MvpBasePresenter<View extends MvpView> implements MvpPrese
     protected View getView() {
         return view.get();
     }
+
 
 
 }

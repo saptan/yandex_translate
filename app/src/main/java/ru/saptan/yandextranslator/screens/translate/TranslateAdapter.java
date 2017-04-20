@@ -121,6 +121,8 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
             if (item.getText().length() > 0) {
                 // Отобразить карточку
                 outputVH.cardOutput.setVisibility(View.VISIBLE);
+                // Отобразить переведенный текст
+                outputVH.tvTranslated.setText(item.getText());
             } else
                 // иначе скрыть карточку
                 outputVH.cardOutput.setVisibility(View.GONE);

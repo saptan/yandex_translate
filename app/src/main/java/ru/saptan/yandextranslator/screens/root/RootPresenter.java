@@ -3,7 +3,7 @@ package ru.saptan.yandextranslator.screens.root;
 import ru.saptan.yandextranslator.mvp.MvpBasePresenter;
 import ru.saptan.yandextranslator.navigation.NameScreens;
 
-public class RootPresenter extends MvpBasePresenter<RootView> implements RootContract.Presenter {
+public class RootPresenter extends MvpBasePresenter<RootView, RootViewModel> implements RootContract.Presenter {
 
 
     public RootPresenter() {

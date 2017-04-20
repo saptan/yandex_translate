@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,10 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     private TranslatePresenter presenter;
     //
     private TranslateAdapter adapter;
+    // Запретить делать запрос на перевод текста
+    // Данный флаг необходим для того, чтобы после поворота экрана, когда во View передаются данные
+    // из Presenter-а не отоправлялся запрос на повторный перевод.
+    private boolean blokingTranslateRequest = false;
 
     public TranslateView() {
         // Required empty public constructor
@@ -82,6 +87,8 @@ public class TranslateView extends Fragment implements TranslateContract.View {
         } else {
             // Иначе если фрагмент был восстановлен, то получить уже ранее созданный презентер
             presenter = stateManager.get(TranslatePresenter.class.getName());
+            // Т.к. View было пересоздано то запретить повторный вызов метода для перевода текста
+            blokingTranslateRequest = true;
         }
     }
 
@@ -111,13 +118,20 @@ public class TranslateView extends Fragment implements TranslateContract.View {
      */
     @Override
     public void textChanged(String text) {
-        // Еслм длина текста больше нуля
-        if (text.length() > 0)
-            // то сообщить Presenter-у что необходимо выполнить перевод текста
-            presenter.translateText(text);
-        else
-            // Иначе если это пустая строка, то спрятать карточку с переводом
-            hideCardTranslation();
+
+        if (!blokingTranslateRequest) {
+            // Сообщить Presenter-у чтобы содержимое текстового поля было изменено
+            presenter.setInputtedText(text);
+
+            // Еслм длина текста больше нуля
+            if (text.length() > 0)
+                // то сообщить Presenter-у что необходимо выполнить перевод текста
+                presenter.translateText();
+            else
+                // Иначе если это пустая строка, то спрятать карточку с переводом
+                hideCardTranslation();
+        }
+        blokingTranslateRequest = false;
     }
 
     /**
@@ -130,6 +144,19 @@ public class TranslateView extends Fragment implements TranslateContract.View {
         TranslateCardItem outputCard = adapter.getItem(TranslateCardItem.Type.OUTPUT);
         outputCard.setText(text);
         adapter.updateItem(TranslateCardItem.Type.OUTPUT);
+    }
+
+    /**
+     * Отобразить текст, который ввел пользователь
+     * Данный метод вызывается после изменения конфигурации, например, поворота экрана
+     *
+     * @param text - введеный ранее текст
+     */
+    @Override
+    public void showInputtedText(String text) {
+        TranslateCardItem inputCard = adapter.getItem(TranslateCardItem.Type.INPUT);
+        inputCard.setText(text);
+        adapter.updateItem(TranslateCardItem.Type.INPUT);
     }
 
     /**

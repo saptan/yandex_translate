@@ -19,18 +19,59 @@ public interface TranslateContract {
         void showTranslatedText(String text);
 
         /**
+         * Отобразить текст, который ввел пользователь
+         * Данный метод вызывается после изменения конфигурации, например, поворота экрана
+         * @param text - введеный ранее текст
+         */
+        void showInputtedText(String text);
+
+        /**
          * Спрятать карточку с переводом текста
          */
         void hideCardTranslation();
     }
 
     interface Presenter {
+
+        /**
+         * Сохранить текст, который ввел пользователь
+         * @param inputtedText - введеный текст
+         */
+        void setInputtedText(String inputtedText);
+
         /**
          * Выполнить перевод текста
-         * @param text - текст, который необходмо перевести
          */
-        void translateText(String text);
+        void translateText();
     }
+
+    interface ViewModel {
+        /**
+         * Получить текст, который ввел пользователь
+         * @return - введеный текст
+         */
+        String getInputtedText();
+
+        /**
+         * Сохранить текст, который ввел пользователь
+         * @param inputtedText - введеный текст
+         */
+        void setInputtedText(String inputtedText);
+
+        /**
+         * Получить текст, который был переведен
+         * @return - переведенный текст
+         */
+        String getTranslatedText();
+
+        /**
+         * Сохранить текст, который был переведен
+         * @param translatedText - переведенный текст
+         */
+        void setTranslatedText(String translatedText);
+
+    }
+
 
 
 }
