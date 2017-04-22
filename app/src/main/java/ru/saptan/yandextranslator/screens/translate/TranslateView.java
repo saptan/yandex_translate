@@ -10,13 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import ru.saptan.yandextranslator.R;
 import ru.saptan.yandextranslator.data.StateManager;
 import ru.saptan.yandextranslator.interactors.TranslateInteractor;
+import ru.saptan.yandextranslator.models.Language;
 import ru.saptan.yandextranslator.models.TranslateCardItem;
 
 public class TranslateView extends Fragment implements TranslateContract.View {
@@ -29,6 +33,13 @@ public class TranslateView extends Fragment implements TranslateContract.View {
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
+
+    @BindView(R.id.tv_language_in)
+    TextView tvInputLanguage;
+
+    @BindView(R.id.tv_language_out)
+    TextView tvOutputLanguage;
+
 
     // Объект для сохранения состояния.
     private StateManager stateManager;
@@ -166,6 +177,34 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     public void hideCardTranslation() {
         showTranslatedText("");
     }
+
+    /**
+     * Отобразить в Toolbar название языка для исходного текста
+     *
+     * @param language - информация о языке
+     */
+    @Override
+    public void showInputLanguage(Language language) {
+        tvInputLanguage.setText(language.getName());
+    }
+
+    /**
+     * Отобразить в Toolbar название языка для переведенного текста
+     *
+     * @param language - информация о языке
+     */
+    @Override
+    public void showTranslateLanguage(Language language) {
+        tvOutputLanguage.setText(language.getName());
+    }
+
+
+    @OnClick(R.id.ic_swap_language)
+    public void swapLanguage() {
+        presenter.swapLanguage();
+    }
+
+
 
     @Override
     public void onResume() {

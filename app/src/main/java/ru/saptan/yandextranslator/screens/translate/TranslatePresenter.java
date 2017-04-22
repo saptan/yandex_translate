@@ -3,8 +3,11 @@ package ru.saptan.yandextranslator.screens.translate;
 
 import android.util.Log;
 
+import java.util.Collections;
+
 import ru.saptan.yandextranslator.data.datasource.remote.responce.TranslationResponse;
 import ru.saptan.yandextranslator.interactors.TranslateInteractor;
+import ru.saptan.yandextranslator.models.Language;
 import ru.saptan.yandextranslator.mvp.MvpBasePresenter;
 import rx.Subscriber;
 import rx.Subscription;
@@ -55,7 +58,7 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
     @Override
     public void translateText() {
 
-        Subscription subscription = translateInteractor.getTranslation(viewModel.getInputtedText(), "ru-en")
+        Subscription subscription = translateInteractor.getTranslation(viewModel.getInputtedText(), viewModel.getDirectionTranslation())
                 .subscribe(new Subscriber<TranslationResponse>() {
                     @Override
                     public void onCompleted() {
@@ -75,5 +78,49 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
 
         compositeSubscription.add(subscription);
 
+    }
+
+    /**
+     * Установить язык для исходного текста
+     *
+     * @param language - информация о языке (код, название)
+     */
+    @Override
+    public void setInputLanguage(Language language) {
+        viewModel.setInputLanguage(language);
+    }
+
+    /**
+     * Установить язык, на который будет переведен текст
+     *
+     * @param language - информация о языке (код, название)
+     */
+    @Override
+    public void setTranslatedLanguage(Language language) {
+        viewModel.setTranslatedLanguage(language);
+    }
+
+    /**
+     * Переключить язык перевода. Например, если до вызова этого метода languages = {ru, en},
+     * то после будет languages = {en, ru}
+     */
+    @Override
+    public void swapLanguage() {
+        viewModel.swapLanguage();
+        getView().showInputLanguage(viewModel.getLanguages().get(0));
+        getView().showTranslateLanguage(viewModel.getLanguages().get(1));
+        // Заменить исходный текст на переведенный
+        getView().showInputtedText(viewModel.getInputtedText());
+    }
+
+    /**
+     * Установить флаг "Автоматическое определение языка исходного текста"
+     *
+     * @param autoDetermineLanguage - true - язык определяется автоматически,
+     *                              false - язык определяется пользователем
+     */
+    @Override
+    public void setAutoDetermineLanguage(boolean autoDetermineLanguage) {
+        viewModel.setAutoDetermineLanguage(autoDetermineLanguage);
     }
 }

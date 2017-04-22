@@ -1,6 +1,9 @@
 package ru.saptan.yandextranslator.screens.translate;
 
 
+import java.util.List;
+
+import ru.saptan.yandextranslator.models.Language;
 import ru.saptan.yandextranslator.mvp.MvpView;
 
 public interface TranslateContract {
@@ -29,9 +32,23 @@ public interface TranslateContract {
          * Спрятать карточку с переводом текста
          */
         void hideCardTranslation();
+
+        /**
+         * Отобразить в Toolbar название языка для исходного текста
+         * @param language - информация о языке
+         */
+        void showInputLanguage(Language language);
+
+        /**
+         * Отобразить в Toolbar название языка для переведенного текста
+         * @param language - информация о языке
+         */
+        void showTranslateLanguage(Language language);
+
+
     }
 
-    interface Presenter {
+    interface Presenter extends SettingDirectionTranslation {
 
         /**
          * Сохранить текст, который ввел пользователь
@@ -43,9 +60,11 @@ public interface TranslateContract {
          * Выполнить перевод текста
          */
         void translateText();
+
+
     }
 
-    interface ViewModel {
+    interface ViewModel extends SettingDirectionTranslation {
         /**
          * Получить текст, который ввел пользователь
          * @return - введеный текст
@@ -70,7 +89,61 @@ public interface TranslateContract {
          */
         void setTranslatedText(String translatedText);
 
+        /**
+         * Получить используемые языки направления перевода
+         * @return - информация о языках (код, название)
+         */
+        List<Language> getLanguages();
+
+        /**
+         * Получить направление перевода
+         * @return - строка в виде пары кодов языков "ru-en", либо в виде кода конечного языка "ru"
+         */
+        String getDirectionTranslation();
+
+        /**
+         * Проверить, установлен ли флаг "Автоматическое определение языка исходного текста"
+         * @return true - определяется автоматически, false - определяется пользователем
+         */
+        boolean isAutoDetermineLanguage();
+
+
+
     }
+
+    /**
+     *  Контракт для настройки направления перевода
+     */
+    interface SettingDirectionTranslation {
+
+        /**
+         * Установить язык для исходного текста
+         * @param language - информация о языке (код, название)
+         */
+        void setInputLanguage(Language language);
+
+        /**
+         * Установить язык, на который будет переведен текст
+         * @param language - информация о языке (код, название)
+         */
+        void setTranslatedLanguage(Language language);
+
+        /**
+         * Переключить язык перевода. Например, если до вызова этого метода languages = {ru, en},
+         * то после будет languages = {en, ru}
+         */
+        void swapLanguage();
+
+        /**
+         * Установить флаг "Автоматическое определение языка исходного текста"
+         * @param autoDetermineLanguage - true - язык определяется автоматически,
+         *                              false - язык определяется пользователем
+         */
+        void setAutoDetermineLanguage(boolean autoDetermineLanguage);
+    }
+
+
+
 
 
 
