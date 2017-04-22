@@ -6,9 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import ru.saptan.yandextranslator.mvp.MvpAdapter;
 import rx.subscriptions.CompositeSubscription;
 
-public abstract class BaseAdapter<View, Item> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class BaseAdapter<View, Item> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements MvpAdapter{
 
     protected final String TAG_CLASS = getClass().getSimpleName();
     protected final String TAG = "debug";
@@ -36,6 +39,7 @@ public abstract class BaseAdapter<View, Item> extends RecyclerView.Adapter<Recyc
 
     /**
      * Добавить элемент в список
+     *
      * @param item - объект
      */
     public void insertItem(Item item) {
@@ -45,6 +49,7 @@ public abstract class BaseAdapter<View, Item> extends RecyclerView.Adapter<Recyc
 
     /**
      * Обновить элемент списка
+     *
      * @param position - позиция элемента в списке
      */
     public void updateItem(int position) {
@@ -53,6 +58,7 @@ public abstract class BaseAdapter<View, Item> extends RecyclerView.Adapter<Recyc
 
     /**
      * Получить элемент списка
+     *
      * @param position - позиция элемента в списке
      * @return - объект
      */

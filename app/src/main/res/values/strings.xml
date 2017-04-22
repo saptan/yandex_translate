@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Переводчик</string>
 
+
+    <string name="toolbar.title_screen.choiceLanguage.input">Язык текста</string>
+    <string name="toolbar.title_screen.choiceLanguage.output">Язык перевода</string>
+
     <!-- Подсказки для текстовых полей-->
     <string name="edit_text.hint.translate.input">Введите текст, который хотите перевести</string>
+    
+    
 </resources>

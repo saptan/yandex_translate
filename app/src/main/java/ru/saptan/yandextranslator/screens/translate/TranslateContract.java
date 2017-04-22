@@ -8,7 +8,7 @@ import ru.saptan.yandextranslator.mvp.MvpView;
 
 public interface TranslateContract {
 
-    interface View extends MvpView {
+    interface View {
         /**
          * Сообщить View о том, что содержимое EditText было изменено
          * @param text - текст, который ввел пользователь, чтобы получить его перевод
@@ -61,7 +61,20 @@ public interface TranslateContract {
          */
         void translateText();
 
+        /**
+         * Выбрать другой язык текста
+         */
+        void chooseInputLanguage();
 
+        /**
+         * Выбрать другой язык перевода
+         */
+        void chooseOutputLanguage();
+
+        /**
+         * Загрузить список поддерживаемых языков
+         */
+        void loadSupportLanguage();
     }
 
     interface ViewModel extends SettingDirectionTranslation {

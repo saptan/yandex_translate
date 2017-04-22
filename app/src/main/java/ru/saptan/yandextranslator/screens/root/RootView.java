@@ -3,6 +3,8 @@ package ru.saptan.yandextranslator.screens.root;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -45,6 +47,8 @@ public class RootView extends AppCompatActivity implements RootContract.View {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, TAG_CLASS + ": onCreate()");
+
         setContentView(R.layout.activity_root);
         ButterKnife.bind(this);
     }
@@ -56,6 +60,7 @@ public class RootView extends AppCompatActivity implements RootContract.View {
     public void setupPresenter() {
         // Если Activity создается впервые, то...
         if (stateManager.firstTimeIn()) {
+            Log.d(TAG, TAG_CLASS + ": setupPresenter() -> firstTimeIn() = " + stateManager.firstTimeIn());
 
             // Создать новый презентер
             RootPresenter _presenter = new RootPresenter();
@@ -63,6 +68,8 @@ public class RootView extends AppCompatActivity implements RootContract.View {
             stateManager.put(_presenter);
             rootPresenter = _presenter;
         } else {
+            Log.d(TAG, TAG_CLASS + ": setupPresenter() -> firstTimeIn() = " + stateManager.firstTimeIn());
+
             // Иначе если Activity была восстановлена, то получить уже ранее созданный презентер
             rootPresenter = stateManager.get(RootPresenter.class.getName());
         }
@@ -73,6 +80,8 @@ public class RootView extends AppCompatActivity implements RootContract.View {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, TAG_CLASS + ": onResume()");
+
         // Настроить Presenter для взаимодействия со View
         setupPresenter();
         // Привязать к презентеру вьюшку
@@ -84,6 +93,8 @@ public class RootView extends AppCompatActivity implements RootContract.View {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, TAG_CLASS + ": onPause()");
+
         // Отвязать View от Presenter
         rootPresenter.detachView();
         //
@@ -93,15 +104,28 @@ public class RootView extends AppCompatActivity implements RootContract.View {
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(TAG, TAG_CLASS + ": onStop() -> " + isChangingConfigurations());
+
         // Сообщить презентеру, что View может быть уничтожено
         rootPresenter.destroy(isChangingConfigurations());
+
         // Если View остановлено (а в скором и уничтожено) не из-за смены конфигурации
         if (!isChangingConfigurations()) {
+            Log.d(TAG, TAG_CLASS + ": onStop() -> " + isChangingConfigurations() + " обнулить все ссылки");
             // то обнулить все ссылки
             rootPresenter = null;
-            navigator = null;
         }
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
 }

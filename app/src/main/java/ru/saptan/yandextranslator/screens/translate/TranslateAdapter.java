@@ -37,12 +37,7 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
     // Видимость кнопки "Очистить". Если текстовое поле заполнено, то отображается
     private boolean visibilityCloseBtn;
 
-    TranslateAdapter() {
-        super();
-        // По умолчанию кнопки не видны
-        visibilityInputBtn = false;
-        visibilityCloseBtn = false;
-    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -66,6 +61,10 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
         // Если элемент является карточкой для ввода текста
         if (holder instanceof InputVH) {
 
+            // По умолчанию кнопки не видны
+            visibilityInputBtn = false;
+            visibilityCloseBtn = false;
+
             InputVH inputVH = (InputVH) holder;
 
             if (inputVH.textChangedSubscription != null) {
@@ -75,6 +74,7 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
             if (item.getText().length() > 0) {
                 // Текст, который необходимо перевести
                 inputVH.editTextInput.setText(item.getText());
+                inputVH.editTextInput.setSelection(item.getText().length());
             }
 
             // Заменить кнопку Enter на Complete (готово), чтобы исключить перенос текста, а при нажатии
@@ -118,6 +118,13 @@ public class TranslateAdapter extends BaseAdapter<TranslateContract.View, Transl
                             }
                         }
                     });
+
+
+            inputVH.editTextInput.setOnFocusChangeListener((v, hasFocus) -> {
+                if (!hasFocus) {
+                    Log.d(TAG, TAG_CLASS + ": hideKeyboard");
+                }
+            });
 
             compositeSubscription.add((inputVH).textChangedSubscription);
         }

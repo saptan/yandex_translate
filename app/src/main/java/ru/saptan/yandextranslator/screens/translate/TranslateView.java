@@ -2,7 +2,6 @@ package ru.saptan.yandextranslator.screens.translate;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -10,23 +9,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import ru.saptan.yandextranslator.R;
+import ru.saptan.yandextranslator.base.BaseMvpFragment;
 import ru.saptan.yandextranslator.data.StateManager;
 import ru.saptan.yandextranslator.interactors.TranslateInteractor;
 import ru.saptan.yandextranslator.models.Language;
 import ru.saptan.yandextranslator.models.TranslateCardItem;
 
-public class TranslateView extends Fragment implements TranslateContract.View {
-
-    protected final String TAG = "debug";
-    protected final String TAG_CLASS = getClass().getSimpleName();
+public class TranslateView extends BaseMvpFragment<TranslatePresenter, TranslateAdapter>
+        implements TranslateContract.View {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -41,15 +39,6 @@ public class TranslateView extends Fragment implements TranslateContract.View {
     TextView tvOutputLanguage;
 
 
-    // Объект для сохранения состояния.
-    private StateManager stateManager;
-    //
-    private Unbinder unbinder;
-
-    // Ссылка на презентер
-    private TranslatePresenter presenter;
-    //
-    private TranslateAdapter adapter;
     // Запретить делать запрос на перевод текста
     // Данный флаг необходим для того, чтобы после поворота экрана, когда во View передаются данные
     // из Presenter-а не отоправлялся запрос на повторный перевод.
@@ -74,39 +63,54 @@ public class TranslateView extends Fragment implements TranslateContract.View {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+
+
+        Log.d(TAG, TAG_CLASS + ": onCreateView()");
+        Log.d(TAG, TAG_CLASS + ": language = " + Locale.getDefault().getDisplayLanguage()); ;
         return view;
     }
 
 
     /**
-     * Настроить Presenter для взаимодействия со View
+     * Создать Presenter для взаимодействия с View
      */
     @Override
-    public void setupPresenter() {
-        if (stateManager == null)
-            stateManager = new StateManager(getActivity().getSupportFragmentManager(), TAG + "_retainer");
+    protected TranslatePresenter createPresenter() {
+        Log.d(TAG, TAG_CLASS + ": createPresenter()");
 
-        // Если фрагмент создается впервые, то...
-        if (stateManager.firstTimeIn()) {
-            // Создать интерактор, который будет взаимодействовать с RetrofitApi для получения перевода
-            TranslateInteractor translateInteractor = new TranslateInteractor();
-            // Создать новый презентер
-            TranslatePresenter _presenter = new TranslatePresenter(translateInteractor);
-            // Сохранить его в менеджере состояний
-            stateManager.put(_presenter);
-            presenter = _presenter;
-        } else {
-            // Иначе если фрагмент был восстановлен, то получить уже ранее созданный презентер
-            presenter = stateManager.get(TranslatePresenter.class.getName());
-            // Т.к. View было пересоздано то запретить повторный вызов метода для перевода текста
-            blokingTranslateRequest = true;
-        }
+        // Создать интерактор, который будет взаимодействовать с RetrofitApi для получения перевода
+        TranslateInteractor translateInteractor = new TranslateInteractor();
+        // Создать новый презентер
+        return new TranslatePresenter(translateInteractor);
+    }
+
+    /**
+     * Получить класс Presenter
+     *
+     * @return - class presenter
+     */
+    @Override
+    protected Class<TranslatePresenter> getPresenterClass() {
+        return TranslatePresenter.class;
+    }
+
+    /**
+     * Событие происходит когда Presenter был восстановлен
+     */
+    @Override
+    protected void onRecreatedPresenter() {
+        Log.d(TAG, TAG_CLASS + ": onRecreatedPresenter()");
+
+        // Т.к. View было пересоздано то запретить повторный вызов метода для перевода текста
+        blokingTranslateRequest = true;
     }
 
     /**
      * Инициализировать адаптер
      */
     private void initializeAdapter() {
+        Log.d(TAG, TAG_CLASS + ": initializeAdapter()");
+
         adapter = new TranslateAdapter();
         adapter.bindView(this);
 
@@ -129,6 +133,7 @@ public class TranslateView extends Fragment implements TranslateContract.View {
      */
     @Override
     public void textChanged(String text) {
+        Log.d(TAG, TAG_CLASS + ": textChanged() -> " + text);
 
         if (!blokingTranslateRequest) {
             // Сообщить Presenter-у чтобы содержимое текстового поля было изменено
@@ -152,6 +157,8 @@ public class TranslateView extends Fragment implements TranslateContract.View {
      */
     @Override
     public void showTranslatedText(String text) {
+        Log.d(TAG, TAG_CLASS + ": showTranslatedText() -> " + text);
+
         TranslateCardItem outputCard = adapter.getItem(TranslateCardItem.Type.OUTPUT);
         outputCard.setText(text);
         adapter.updateItem(TranslateCardItem.Type.OUTPUT);
@@ -165,6 +172,8 @@ public class TranslateView extends Fragment implements TranslateContract.View {
      */
     @Override
     public void showInputtedText(String text) {
+        Log.d(TAG, TAG_CLASS + ": showInputtedText() -> " + text);
+
         TranslateCardItem inputCard = adapter.getItem(TranslateCardItem.Type.INPUT);
         inputCard.setText(text);
         adapter.updateItem(TranslateCardItem.Type.INPUT);
@@ -204,39 +213,15 @@ public class TranslateView extends Fragment implements TranslateContract.View {
         presenter.swapLanguage();
     }
 
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Настроить Presenter для взаимодействия со View
-        setupPresenter();
-        // Привязать к презентеру вьюшку
-        presenter.attachView(this);
+    @OnClick(R.id.tv_language_in)
+    public void chooseInputLanguage() {
+        hideKeyboard();
+        presenter.chooseInputLanguage();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        // Отвязать View от Presenter
-        presenter.detachView();
+    @OnClick(R.id.tv_language_out)
+    public void chooseOutputLanguage() {
+        hideKeyboard();
+        presenter.chooseOutputLanguage();
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-        adapter.destroy();
-
-        // Если фрагмент уничтожен из-за смены конфигурации (например, поворот экрана), то
-        // Presenter продолжает жить, иначе
-        presenter.destroy(getActivity().isChangingConfigurations());
-
-        if (getActivity().isChangingConfigurations()) {
-            presenter = null;
-            stateManager = null;
-        }
-    }
-
-
 }

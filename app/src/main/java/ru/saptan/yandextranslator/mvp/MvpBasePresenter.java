@@ -1,6 +1,8 @@
 package ru.saptan.yandextranslator.mvp;
 
 
+import android.util.Log;
+
 import java.lang.ref.WeakReference;
 
 import ru.saptan.yandextranslator.App;
@@ -64,7 +66,6 @@ public abstract class MvpBasePresenter<View extends MvpView, ViewModel> implemen
      * Метод вызывается тогда, когда Presenter пережил уничтожение старого View и привязывется к новому
      */
     protected void onRecreated() {
-
     }
 
     /**
@@ -87,7 +88,7 @@ public abstract class MvpBasePresenter<View extends MvpView, ViewModel> implemen
         // В случае, если View было уничтожено не из-за смены конфигурации, то
         if (!isChangingConfig) {
             // Отписаться сразу от всех подписок
-            compositeSubscription.unsubscribe();
+            compositeSubscription.clear();
         }
     }
 
