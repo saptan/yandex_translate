@@ -3,6 +3,7 @@ package ru.saptan.yandextranslator.screens.translate;
 
 import android.util.Log;
 
+import java.util.List;
 import java.util.Map;
 
 import ru.saptan.yandextranslator.data.datasource.remote.responce.SupportLanguagesResponse;
@@ -28,19 +29,13 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
         viewModel = new TranslateViewModel();
     }
 
-    @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-        loadSupportLanguage();
-    }
+
 
     /**
      * Метод вызывается тогда, когда Presenter пережил уничтожение старого View и привязывется к новому
      */
     @Override
     protected void onRecreated() {
-        Log.d(TAG, TAG_CLASS + ": onRecreated()");
-
         // Если дляна ранее введеного текста больше 0
         if (viewModel != null && viewModel.getInputtedText().length() > 0) {
             // Отобразить этот текст
@@ -57,7 +52,6 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
      */
     @Override
     public void setInputtedText(String inputtedText) {
-        Log.d(TAG, TAG_CLASS + ": setInputtedText() -> " + inputtedText);
         viewModel.setInputtedText(inputtedText);
     }
 
@@ -66,15 +60,10 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
      */
     @Override
     public void translateText() {
-
-
-        Log.d(TAG, TAG_CLASS + ": translateText()");
-
         Subscription subscription = translateInteractor.getTranslation(viewModel.getInputtedText(), viewModel.getDirectionTranslation())
                 .subscribe(new Subscriber<TranslationResponse>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, TAG_CLASS + ": translateText() -> onCompleted()");
                         getView().showTranslatedText(viewModel.getTranslatedText());
 
                     }
@@ -87,7 +76,6 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
 
                     @Override
                     public void onNext(TranslationResponse translationResponse) {
-                        Log.d(TAG, TAG_CLASS + ": translateText() -> onNext() -> " + translationResponse.getTranslatedText().get(0));
                         viewModel.setTranslatedText(translationResponse.getTranslatedText().get(0));
                     }
                 });
@@ -101,7 +89,6 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
      */
     @Override
     public void chooseInputLanguage() {
-        Log.d(TAG, TAG_CLASS + ": chooseInputLanguage()");
         router.navigateTo(NameScreens.CHOICE_LANGUAGE, true);
     }
 
@@ -110,42 +97,10 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
      */
     @Override
     public void chooseOutputLanguage() {
-        Log.d(TAG, TAG_CLASS + ": chooseInputLanguage()");
         router.navigateTo(NameScreens.CHOICE_LANGUAGE, false);
     }
 
-    /**
-     * Загрузить список поддерживаемых языков
-     */
-    @Override
-    public void loadSupportLanguage() {
-        Log.d(TAG, TAG_CLASS + ": loadSupportLanguage()");
 
-        Subscription subscription = translateInteractor.getSupportLanguages("ru")
-                .subscribe(new Subscriber<SupportLanguagesResponse>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG, TAG_CLASS + ": onCompleted()");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(TAG, TAG_CLASS + ": onError()");
-                        Log.d(TAG, TAG_CLASS + e);
-                    }
-
-                    @Override
-                    public void onNext(SupportLanguagesResponse supportLanguagesResponse) {
-
-                        for (Map.Entry<String, String> entry : supportLanguagesResponse.getLangs().entrySet()) {
-                            Log.d(TAG, TAG_CLASS + ": code = " + entry.getKey() + ". name = " + entry.getValue());
-                        }
-
-                    }
-                });
-
-        compositeSubscription.add(subscription);
-    }
 
     /**
      * Установить язык для исходного текста
@@ -173,8 +128,6 @@ public class TranslatePresenter extends MvpBasePresenter<TranslateView, Translat
      */
     @Override
     public void swapLanguage() {
-        Log.d(TAG, TAG_CLASS + ": swapLanguage()");
-
         viewModel.swapLanguage();
         getView().showInputLanguage(viewModel.getLanguages().get(0));
         getView().showTranslateLanguage(viewModel.getLanguages().get(1));

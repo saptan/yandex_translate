@@ -19,6 +19,8 @@ import butterknife.OnClick;
 import ru.saptan.yandextranslator.R;
 import ru.saptan.yandextranslator.base.BaseMvpFragment;
 import ru.saptan.yandextranslator.data.StateManager;
+import ru.saptan.yandextranslator.data.entity.Direction;
+import ru.saptan.yandextranslator.data.repository.DirectionRepository;
 import ru.saptan.yandextranslator.interactors.TranslateInteractor;
 import ru.saptan.yandextranslator.models.Language;
 import ru.saptan.yandextranslator.models.TranslateCardItem;
@@ -63,10 +65,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
-
-
-        Log.d(TAG, TAG_CLASS + ": onCreateView()");
-        Log.d(TAG, TAG_CLASS + ": language = " + Locale.getDefault().getDisplayLanguage()); ;
         return view;
     }
 
@@ -76,7 +74,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
      */
     @Override
     protected TranslatePresenter createPresenter() {
-        Log.d(TAG, TAG_CLASS + ": createPresenter()");
 
         // Создать интерактор, который будет взаимодействовать с RetrofitApi для получения перевода
         TranslateInteractor translateInteractor = new TranslateInteractor();
@@ -99,7 +96,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
      */
     @Override
     protected void onRecreatedPresenter() {
-        Log.d(TAG, TAG_CLASS + ": onRecreatedPresenter()");
 
         // Т.к. View было пересоздано то запретить повторный вызов метода для перевода текста
         blokingTranslateRequest = true;
@@ -109,7 +105,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
      * Инициализировать адаптер
      */
     private void initializeAdapter() {
-        Log.d(TAG, TAG_CLASS + ": initializeAdapter()");
 
         adapter = new TranslateAdapter();
         adapter.bindView(this);
@@ -133,7 +128,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
      */
     @Override
     public void textChanged(String text) {
-        Log.d(TAG, TAG_CLASS + ": textChanged() -> " + text);
 
         if (!blokingTranslateRequest) {
             // Сообщить Presenter-у чтобы содержимое текстового поля было изменено
@@ -157,7 +151,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
      */
     @Override
     public void showTranslatedText(String text) {
-        Log.d(TAG, TAG_CLASS + ": showTranslatedText() -> " + text);
 
         TranslateCardItem outputCard = adapter.getItem(TranslateCardItem.Type.OUTPUT);
         outputCard.setText(text);
@@ -172,7 +165,6 @@ public class TranslateView extends BaseMvpFragment<TranslatePresenter, Translate
      */
     @Override
     public void showInputtedText(String text) {
-        Log.d(TAG, TAG_CLASS + ": showInputtedText() -> " + text);
 
         TranslateCardItem inputCard = adapter.getItem(TranslateCardItem.Type.INPUT);
         inputCard.setText(text);

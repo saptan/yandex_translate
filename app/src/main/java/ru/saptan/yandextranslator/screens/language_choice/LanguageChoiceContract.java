@@ -10,6 +10,10 @@ public interface LanguageChoiceContract {
     }
 
     interface Presenter {
+        /**
+         * Загрузить список поддерживаемых языков
+         */
+        void loadSupportLanguage();
 
     }
 }

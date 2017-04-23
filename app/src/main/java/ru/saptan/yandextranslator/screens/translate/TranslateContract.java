@@ -71,10 +71,6 @@ public interface TranslateContract {
          */
         void chooseOutputLanguage();
 
-        /**
-         * Загрузить список поддерживаемых языков
-         */
-        void loadSupportLanguage();
     }
 
     interface ViewModel extends SettingDirectionTranslation {
