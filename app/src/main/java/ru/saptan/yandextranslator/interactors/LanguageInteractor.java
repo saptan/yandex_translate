@@ -14,7 +14,9 @@ import ru.saptan.yandextranslator.data.datasource.remote.api.RetrofitApi;
 import ru.saptan.yandextranslator.data.datasource.remote.responce.SupportLanguagesResponse;
 import ru.saptan.yandextranslator.data.entity.Direction;
 import ru.saptan.yandextranslator.data.repository.DirectionRepository;
+import ru.saptan.yandextranslator.data.repository.LanguageRepository;
 import ru.saptan.yandextranslator.interactors.mappers.ResponseToDirectionMapper;
+import ru.saptan.yandextranslator.interactors.mappers.ResponseToLanguageMapper;
 import ru.saptan.yandextranslator.models.Language;
 import rx.Observable;
 
@@ -22,9 +24,11 @@ public class LanguageInteractor extends BaseInteractor {
 
     private SupportLanguagesResponse response;
     private DirectionRepository directionRepository;
+    private LanguageRepository languageRepository;
 
-    public LanguageInteractor(DirectionRepository directionRepository) {
+    public LanguageInteractor(DirectionRepository directionRepository, LanguageRepository languageRepository) {
         this.directionRepository = directionRepository;
+        this.languageRepository = languageRepository;
     }
 
     /**
@@ -38,39 +42,19 @@ public class LanguageInteractor extends BaseInteractor {
                 .getSupportLanguages(ApiKeyStore.KEY_API_TRANSLATE, ui)
                 // Сохранить ответ, полученный от сервера
                 .doOnNext(this::saveResponse)
+                // Добавить все направления перевода в БД
                 .flatMap(response -> directionRepository.add(ResponseToDirectionMapper.map(response.getDirs())))
-                .flatMap(directions -> addLanguage(mapperToLanguage(response.getLangs())))
-                //.map(response -> mapperToLanguage(response.getLangs()))
+                // Получить информацию о всех языках, установив для каждого значение параметра ui
+                .flatMap(directions -> Observable.just(ResponseToLanguageMapper.map(response.getLangs(), ui)))
+                // Добавить языки в БД
+                .flatMap(languages -> languageRepository.add(languages))
                 .compose(applySchedulers());
     }
 
     private void saveResponse(SupportLanguagesResponse response) {
-        Log.d(TAG, TAG_CLASS + ": doOnNext -> saveResponse");
         this.response = response;
     }
 
-    private Observable<List<Language>> addLanguage(List<Language> items) {
 
-        for (Language language : items) {
-            //Log.d(TAG, TAG_CLASS + ": add language -> " + language.getCode() + " : " + language.getName());
-        }
-        return Observable.just(items);
 
-    }
-    private List<Language> mapperToLanguage(HashMap<String, String> supportLanguages) {
-        Log.d(TAG, TAG_CLASS + ": mapperToLanguage -> ");
-
-        List<Language> languages = new ArrayList<>();
-
-        for (Map.Entry<String, String> entry : supportLanguages.entrySet()) {
-
-            Language language = new Language();
-            language.setCode(entry.getKey());
-            language.setName(entry.getValue());
-
-            languages.add(language);
-        }
-
-        return languages;
-    }
 }

@@ -8,7 +8,7 @@ public class NumericField {
         int CODE_LANG_TRANSLATION = 1;
     }
 
-    public interface NumericFieldBase {
+    public interface Language {
         int CODE_LANGUAGE = 0;
         int CODE_UI = 1;
         int NAME = 2;

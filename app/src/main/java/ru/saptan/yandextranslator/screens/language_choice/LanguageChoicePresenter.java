@@ -49,15 +49,18 @@ public class LanguageChoicePresenter extends MvpBasePresenter<LanguageChoiceView
                 .subscribe(new Subscriber<List<Language>>() {
                     @Override
                     public void onCompleted() {
+                        Log.d(TAG, TAG_CLASS + ": onCompleted()");
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        Log.d(TAG, TAG_CLASS + ": onError()");
                         Log.d(TAG, TAG_CLASS + e);
                     }
 
                     @Override
                     public void onNext(List<Language> languages) {
+                        Log.d(TAG, TAG_CLASS + ": onNext()");
                     }
                 });
 

@@ -17,6 +17,7 @@ import ru.saptan.yandextranslator.App;
 import ru.saptan.yandextranslator.R;
 import ru.saptan.yandextranslator.base.BaseMvpFragment;
 import ru.saptan.yandextranslator.data.repository.DirectionRepository;
+import ru.saptan.yandextranslator.data.repository.LanguageRepository;
 import ru.saptan.yandextranslator.interactors.LanguageInteractor;
 
 public class LanguageChoiceView extends BaseMvpFragment<LanguageChoicePresenter, LanguageChoiceAdapter>
@@ -65,9 +66,10 @@ public class LanguageChoiceView extends BaseMvpFragment<LanguageChoicePresenter,
     @Override
     protected LanguageChoicePresenter createPresenter() {
         DirectionRepository directionRepository = new DirectionRepository();
+        LanguageRepository languageRepository = new LanguageRepository();
         // Создать интерактор, который будет взаимодействовать с RetrofitApi для получения информации
         // о поддерживаемых языках
-        LanguageInteractor translateInteractor = new LanguageInteractor(directionRepository);
+        LanguageInteractor translateInteractor = new LanguageInteractor(directionRepository, languageRepository);
         // Создать новый презентер
         return new LanguageChoicePresenter(translateInteractor);
     }
