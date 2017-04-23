@@ -7,6 +7,8 @@ public class Language {
     private String code;
     // Полное название
     private String name;
+    // Язык интерфейса, т.е. на каком языке будет отображаться название языка.
+    private String ui;
 
     public String getCode() {
         return code;
@@ -23,5 +25,14 @@ public class Language {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getUi() {
+        return ui;
+    }
+
+    public void setUi(String ui) {
+        this.ui = ui;
+    }
+
 
 }

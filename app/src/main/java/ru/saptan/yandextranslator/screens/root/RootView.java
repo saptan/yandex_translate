@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.amitshekhar.DebugDB;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.saptan.yandextranslator.App;

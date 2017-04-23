@@ -10,9 +10,7 @@ public class NumericField {
 
     public interface NumericFieldBase {
         int CODE_LANGUAGE = 0;
-        int UI_RU = 1;
-        int UI_UK = 2;
-        int UI_TR = 3;
-        int UI_EN = 4;
+        int CODE_UI = 1;
+        int NAME = 2;
     }
 }

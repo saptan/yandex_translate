@@ -12,9 +12,7 @@ public class Migration_v1 {
     public static final String CREATE_LANGUAGES =
             "create table languages (" +
                     "code_language text, " +
-                    "ui_ru text, " +
-                    "ui_uk text, " +
-                    "ui_tr text, " +
-                    "ui_en text, " +
-                    "unique (code_language) )";
+                    "code_ui text, " +
+                    "name text, " +
+                    "unique (code_language, code_ui) )";
 }

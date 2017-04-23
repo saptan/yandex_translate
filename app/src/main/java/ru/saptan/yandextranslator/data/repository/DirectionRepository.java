@@ -69,12 +69,6 @@ public class DirectionRepository implements Repository<Direction> {
                 long id = database.insert(Contract.Table.DIRECTIONS, null, contentValues);
                 // Обновить локальный id
                 direction.setId(id);
-
-
-                Log.d(TAG, TAG_CLASS + ": add direction -> "
-                        + direction.getCodeInputLanguage()
-                        + " : "
-                        + direction.getCodeOutputLanguage());
             }
 
             // Указать что транзакция была успешно завершена

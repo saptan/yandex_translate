@@ -4,6 +4,7 @@ package ru.saptan.yandextranslator.screens.language_choice;
 import android.util.Log;
 
 import java.util.List;
+import java.util.Locale;
 
 import ru.saptan.yandextranslator.interactors.LanguageInteractor;
 import ru.saptan.yandextranslator.models.Language;
@@ -39,27 +40,24 @@ public class LanguageChoicePresenter extends MvpBasePresenter<LanguageChoiceView
      */
     @Override
     public void loadSupportLanguage() {
-        Log.d(TAG, TAG_CLASS + ": loadSupportLanguage()");
+        // В ответе список поддерживаемых языков будет перечислен в поле langs
+        // вместе с расшифровкой кодов языков. Названия языков будут выведены на языке,
+        // код которого соответствует этому параметру.
+        String ui = Locale.getDefault().getLanguage();
 
-        Subscription subscription = languageInteractor.getSupportLanguages("ru")
+        Subscription subscription = languageInteractor.getSupportLanguages(ui)
                 .subscribe(new Subscriber<List<Language>>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, TAG_CLASS + ": onCompleted()");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, TAG_CLASS + ": onError()");
                         Log.d(TAG, TAG_CLASS + e);
                     }
 
                     @Override
                     public void onNext(List<Language> languages) {
-                        Log.d(TAG, TAG_CLASS + ": onNext()");
-                        for (Language language : languages) {
-                            //Log.d(TAG, TAG_CLASS + ": language -> " + language.getCode() + " : " + language.getName());
-                        }
                     }
                 });
 
